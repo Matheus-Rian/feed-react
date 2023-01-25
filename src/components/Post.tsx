@@ -12,7 +12,7 @@ type Author = {
 };
 
 type Content = {
-  type: string;
+  type: 'paragraph' | 'link';
   content: string;
 }
 
@@ -58,7 +58,7 @@ export function Post({ author, content, publishedAt }: Props) {
     setComments(commentsWithoutDeleteOne);
   }
 
-  function handleNewCommentInvalid(event: React.ChangeEvent<HTMLTextAreaElement>) {
+  function handleNewCommentInvalid(event: React.InvalidEvent<HTMLTextAreaElement>) {
     event.target.setCustomValidity('Esse campo é obrigatório');
   }
 
