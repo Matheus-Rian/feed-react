@@ -1,7 +1,8 @@
 import { format, formatDistanceToNow } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
+import { useState } from 'react';
 import { Avatar } from './Avatar';
-import { Commment } from './Comment';
+import { Comment } from './Comment';
 import Styles from './Post.module.css';
 
 type Author = {
@@ -22,6 +23,12 @@ type Props = {
 }
 
 export function Post({ author, content, publishedAt }: Props) {
+  const [comments, setComments] = useState([
+    'Post massa',
+  ]);
+
+  const [newTextComment, setNewTextComment] = useState('');
+
   const publishedDateFormatted = format(publishedAt, "d 'de' LLLL 'às' HH:mm'h'", {
     locale: ptBR,
   });
@@ -30,6 +37,17 @@ export function Post({ author, content, publishedAt }: Props) {
     locale: ptBR,
     addSuffix: true
   });
+
+  function handleCreateNewComment(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    setComments([...comments, newTextComment]);
+    setNewTextComment('');
+  }
+
+  function handleNewCommentChange(event: React.ChangeEvent<HTMLTextAreaElement> ) {
+    setNewTextComment(event.target.value);
+  }
 
   return (
     <article className={Styles.container}>
@@ -50,18 +68,20 @@ export function Post({ author, content, publishedAt }: Props) {
       <div className={Styles.content}>
         {content.map(line => {
           if (line.type === 'paragraph') {
-            return <p>{line.content}</p>
+            return <p key={line.content}>{line.content}</p>
           } else if (line.type === 'link') {
-            return <p><a href="/#">{line.content}</a></p>
+            return <p key={line.content}><a href="/#">{line.content}</a></p>
           }
         })}
       </div>
 
-      <form className={Styles.commentForm}>
+      <form onSubmit={handleCreateNewComment} className={Styles.commentForm}>
         <strong>Deixe seu feedback</strong>
 
-        <textarea 
+        <textarea
           placeholder='Deixe um comentário'
+          onChange={handleNewCommentChange}
+          value={newTextComment}
         />
 
         <footer>
@@ -70,9 +90,9 @@ export function Post({ author, content, publishedAt }: Props) {
       </form>
 
       <div className={Styles.commentList}>
-        <Commment />
-        <Commment />
-        <Commment />
+        {comments.map(comment => {
+          return <Comment key={comment} content={comment} />
+        })}
       </div>
     </article>
   )
