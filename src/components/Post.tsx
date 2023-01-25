@@ -45,7 +45,8 @@ export function Post({ author, content, publishedAt }: Props) {
     setNewTextComment('');
   }
 
-  function handleNewCommentChange(event: React.ChangeEvent<HTMLTextAreaElement> ) {
+  function handleNewCommentChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    event.target.setCustomValidity('');
     setNewTextComment(event.target.value);
   }
 
@@ -56,6 +57,12 @@ export function Post({ author, content, publishedAt }: Props) {
 
     setComments(commentsWithoutDeleteOne);
   }
+
+  function handleNewCommentInvalid(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    event.target.setCustomValidity('Esse campo é obrigatório');
+  }
+
+  const isNewComentEmpty = !newTextComment;
 
   return (
     <article className={Styles.container}>
@@ -90,10 +97,12 @@ export function Post({ author, content, publishedAt }: Props) {
           placeholder='Deixe um comentário'
           onChange={handleNewCommentChange}
           value={newTextComment}
+          onInvalid={handleNewCommentInvalid}
+          required
         />
 
         <footer>
-          <button type='submit'>Publicar</button>
+          <button type='submit' disabled={isNewComentEmpty}>Publicar</button>
         </footer>
       </form>
 
